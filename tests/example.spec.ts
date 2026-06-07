@@ -104,7 +104,7 @@ test.describe.serial('Test cases W/O TC2,TC5 flow', () => {
   test.afterAll(async () => {
     await page.close();
   });
-  //ТС1
+    //ТС1
     test('TC1 — Open Car Rental Page', async () => {
     await page.goto('https://www.booking.com/cars/index.html');
 
@@ -152,50 +152,13 @@ test.describe.serial('Test cases W/O TC2,TC5 flow', () => {
         console.log('✅  TC3 passed: Search is not started without pick-up location and validation message is displayed');
     });
 
-    // TC4
-    test('TC4 — Select New York from Autocomplete', async () => {
-
-        const expectedLocation = 'New York';
-
-        const suggestionsResponsePromise = page.waitForResponse(
-            response => response.url().includes('/api/location-suggestions'),
-            { timeout: 10000 }
-        ).catch(() => null);
-
-        await pickUpLocation.click();
-        await pickUpLocation.fill(expectedLocation);
-
-
-
-        const suggestionsResponse = await suggestionsResponsePromise;
-        if (!suggestionsResponse) {
-            throw new Error('❌  Location suggestions API request to /api/location-suggestions was not sent or was not received within 10 seconds');
-        }
-
-        const suggestionsStatusCode = suggestionsResponse.status();
-        //console.log(`Location suggestions response code for route /api/location-suggestions: ${suggestionsStatusCode}`);
-
-        if (suggestionsStatusCode !== 200) {
-            throw new Error(`❌  Location suggestions API returned status code: ${suggestionsStatusCode}`);
-        }
-
-        const firstOption = page.locator('button[role="option"]').first();
-        await expect(firstOption).toBeVisible();
-        const firstOptionText = await firstOption.textContent();
-
-        console.log(`Autocomplete first option: ${firstOptionText}`);
-
-        await firstOption.click();
-        await expect(pickUpLocation).toHaveValue(/New York/i);
-        //console.log('✅  New York selected from autocomplete');
-
-        console.log('✅  TC4 passed: Suggestions were displayed and New York was selected from the autocomplete list');
-    });
-
     // TC6
     test('TC6 — Same Date with Drop-off Time Earlier Than Pick-up Time', async () => {
         const expectedLocation = 'New York';
-        await expect(pickUpLocation).toHaveValue(/New York|Нью-Йорк/i);
+        //await expect(pickUpLocation).toHaveValue(/New York|Нью-Йорк/i);
+        await pickUpLocation.click();
+        await pickUpLocation.fill(expectedLocation);
+
         await pickUpDate.click();
 
         const selectedPickUpDate = page.locator('[aria-checked="true"]').first();
@@ -304,6 +267,48 @@ test.describe.serial('Test cases W/O TC2,TC5 flow', () => {
 
         console.log('✅ TC7 passed:Past dates are disabled and current-date past-time validation is displayed');
     });
+
+    // TC4
+    test('TC4 — Select New York from Autocomplete', async () => {
+
+        const expectedLocation = 'New York';
+
+        const suggestionsResponsePromise = page.waitForResponse(
+            response => response.url().includes('/api/location-suggestions'),
+            { timeout: 10000 }
+        ).catch(() => null);
+
+        await pickUpLocation.click();
+        await pickUpLocation.fill(expectedLocation);
+
+
+
+        const suggestionsResponse = await suggestionsResponsePromise;
+        if (!suggestionsResponse) {
+            throw new Error('❌  Location suggestions API request to /api/location-suggestions was not sent or was not received within 10 seconds');
+        }
+
+        const suggestionsStatusCode = suggestionsResponse.status();
+        //console.log(`Location suggestions response code for route /api/location-suggestions: ${suggestionsStatusCode}`);
+
+        if (suggestionsStatusCode !== 200) {
+            throw new Error(`❌  Location suggestions API returned status code: ${suggestionsStatusCode}`);
+        }
+
+        const firstOption = page.locator('button[role="option"]').first();
+        await expect(firstOption).toBeVisible();
+        const firstOptionText = await firstOption.textContent();
+
+        console.log(`Autocomplete first option: ${firstOptionText}`);
+
+        await firstOption.click();
+        await expect(pickUpLocation).toHaveValue(/New York/i);
+        //console.log('✅  New York selected from autocomplete');
+
+        console.log('✅  TC4 passed: Suggestions were displayed and New York was selected from the autocomplete list');
+    });
+
+
 
 
 })
