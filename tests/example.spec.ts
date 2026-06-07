@@ -271,7 +271,9 @@ test.describe.serial('Test cases W/O TC2,TC5 flow', () => {
     // TC4
     test('TC4 — Select New York from Autocomplete', async () => {
 
+        await page.goto(BASE_URL);
         const expectedLocation = 'New York';
+        await pickUpLocation.clear();
 
         const suggestionsResponsePromise = page.waitForResponse(
             response => response.url().includes('/api/location-suggestions'),
@@ -289,7 +291,10 @@ test.describe.serial('Test cases W/O TC2,TC5 flow', () => {
         }
 
         const suggestionsStatusCode = suggestionsResponse.status();
-        //console.log(`Location suggestions response code for route /api/location-suggestions: ${suggestionsStatusCode}`);
+        if (suggestionsStatusCode === 405) {
+            throw new Error(`❌  Location suggestions API returned status code: ${suggestionsStatusCode}`);
+        }
+        console.log(`Location suggestions response code for route /api/location-suggestions: ${suggestionsStatusCode}`);
 
         if (suggestionsStatusCode !== 200) {
             throw new Error(`❌  Location suggestions API returned status code: ${suggestionsStatusCode}`);
