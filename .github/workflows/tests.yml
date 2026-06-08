@@ -1,5 +1,7 @@
 name: Automated Tests
 
+run-name: Automated Tests - ${{ inputs.test_suite }}
+
 on:
   workflow_dispatch:
     inputs:
