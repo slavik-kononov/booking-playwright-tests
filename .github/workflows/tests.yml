@@ -68,7 +68,8 @@ jobs:
           newman run postman/API_automation.postman_collection.json \
             --env-var "baseUrl=https://api.restful-api.dev/objects" \
             --reporters cli,junit \
-            --reporter-junit-export newman/postman-results.xml
+            --reporter-junit-export newman/postman-results.xml \
+            2>&1 | tee newman/postman-run-log.txt
 
       - name: Upload Newman report
         uses: actions/upload-artifact@v4
